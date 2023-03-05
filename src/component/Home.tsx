@@ -20,7 +20,7 @@ export const Home: React.FC = () => {
   async function callGetListProfile() {
     try {
       const response = await axios.get(`${apiUrl}/v2/profiles`);
-      setListData(response.data.map((item:any,index:any) =>({...item,index:index+1})))
+      setListData(response.data)
     } catch (error) {
       console.error(error);
     }
@@ -49,7 +49,7 @@ export const Home: React.FC = () => {
           disabled={!apiUrl}
           onClick={() => callGetListProfile()}
         >
-          Get List Profile
+          Lấy ra list Profile
         </Button>
       </div>
       {isShowDetail && <ShowDetail data={listData} apiUrl={apiUrl} />}

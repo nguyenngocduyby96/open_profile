@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Table, Tag } from "antd";
+import { Button, Input, Modal, Select, Table, Tag } from "antd";
 import React from "react";
 import styled from "styled-components";
 import axios from "axios";
@@ -15,23 +15,32 @@ export type DataType = {
   name: string;
   path: string;
   proxy: string;
-  index: number;
 };
 type Props = {
   data: DataType[];
-  apiUrl:string;
+  apiUrl: string;
 };
-export const ShowDetail: React.FC<Props> = ({ data,apiUrl }) => {
+export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [startNumber, setStartNumber] = React.useState("");
-  const [endNumber, setEndNumber] = React.useState("")
+  const [endNumber, setEndNumber] = React.useState("");
+  const [filterGroup, setFilterGroup] = React.useState("all");
+
+  const [currentData, setCurrentData] = React.useState<DataType[]>([]);
+
+  React.useEffect(() => {
+    if (data) {
+      setCurrentData(data);
+    }
+  }, [data]);
+
+  React.useEffect(() => {
+    if (filterGroup !== "all") {
+      setCurrentData(data.filter((item) => item.group_name === filterGroup));
+    }
+  }, [filterGroup]);
 
   const columns = [
-    {
-      title: "Index",
-      dataIndex: "index",
-      key: "index",
-    },
     {
       title: "Name",
       dataIndex: "name",
@@ -49,23 +58,27 @@ export const ShowDetail: React.FC<Props> = ({ data,apiUrl }) => {
     },
   ];
 
-
-  const callOpenProfile = async (id:string) =>{
+  const callOpenProfile = async (id: string) => {
     try {
       const response = await axios.get(`${apiUrl}/v2/start?profile_id=${id}`);
     } catch (error) {
       console.error(error);
     }
-    
-  }
+  };
 
   const handleOk = () => {
-    const list = data.slice(Number(startNumber)-1,Number(endNumber));
-    list.forEach((element, index) =>{
-        callOpenProfile(element.id)
-    })
-    setOpenModal(false);
+    const list = currentData.slice(Number(startNumber) - 1, Number(endNumber));
+    list.forEach((element, index) => {
+      callOpenProfile(element.id);
+    });
   };
+
+  let optionSelectGroup: string[] = [];
+  data.forEach((element, index) => {
+    if (!optionSelectGroup.includes(element.group_name)) {
+      optionSelectGroup.push(element.group_name);
+    }
+  });
 
   return (
     <Wrapper>
@@ -76,31 +89,58 @@ export const ShowDetail: React.FC<Props> = ({ data,apiUrl }) => {
           padding: "2rem",
         }}
       >
-        <div>Total Profile: {data.length} Kenh</div>
+        <div>Tổng số lượng Profile: {currentData.length} Kênh</div>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ marginRight: 20 }}>Bộ Lọc Group</div>
+          <Select
+            value={filterGroup}
+            style={{ width: 300 }}
+            onChange={(value) => setFilterGroup(value)}
+            options={[
+              ...optionSelectGroup.map((item) => ({
+                value: item,
+                label: item,
+              })),
+              { value: "all", label: "Tất cả các group" },
+            ]}
+          />
+        </div>
         <div>
           <Button type="primary" onClick={() => setOpenModal(true)}>
-            Open Profile
+            Mở Profile
           </Button>
         </div>
       </div>
       <Table
         rowKey={"id"}
         style={{ width: "90%" }}
-        dataSource={data}
+        dataSource={currentData}
         columns={columns}
       />
       {openModal && (
         <Modal
-          title="Basic Modal"
+          title="Mở Profile"
           open={openModal}
           onOk={handleOk}
           onCancel={() => setOpenModal(false)}
         >
           <div style={{ margin: "2rem" }}>
-            <Input type="number" placeholder="Nhap tu acc so" value={startNumber} onChange={(e) => setStartNumber(e.target.value)}></Input>
+            Mở từ acc số:
+            <Input
+              type="number"
+              placeholder="Nhập từ acc số"
+              value={startNumber}
+              onChange={(e) => setStartNumber(e.target.value)}
+            ></Input>
           </div>
           <div style={{ margin: "2rem" }}>
-            <Input type="number" placeholder="Nhap tu acc so" value={endNumber} onChange={(e) => setEndNumber(e.target.value)}></Input>
+            Đến acc số:
+            <Input
+              type="number"
+              placeholder="Đến acc số"
+              value={endNumber}
+              onChange={(e) => setEndNumber(e.target.value)}
+            ></Input>
           </div>
         </Modal>
       )}
