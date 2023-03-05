@@ -38,6 +38,9 @@ export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
     if (filterGroup !== "all") {
       setCurrentData(data.filter((item) => item.group_name === filterGroup));
     }
+    else{
+      setCurrentData(data)
+    }
   }, [filterGroup]);
 
   const columns = [
