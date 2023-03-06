@@ -65,18 +65,13 @@ export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
   ];
 
   const callOpenProfile = async (id: string) => {
-    try {
-      //console.log("try")
-      const response = await axios.get(`${apiUrl}/v2/start?profile_id=${id}`);
-    } catch (error) {
-      console.error(error);
-    }
+    const response = await axios.get(`${apiUrl}/v2/start?profile_id=${id}`);
   };
 
   const handleOk = () => {
     const list = currentData.slice(Number(startNumber) - 1, Number(endNumber));
-    list.forEach((element, index) => {
-      callOpenProfile(element.id);
+    list.forEach(async (element, index) => {
+      await callOpenProfile(element.id);
     });
   };
 
