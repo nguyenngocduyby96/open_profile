@@ -21,12 +21,14 @@ type Props = {
   apiUrl: string;
 };
 
-const filterKey = "nguyenngocduyby96akldjfklajdflk"
+const filterKey = "nguyenngocduyby96akldjfklajdflk";
 export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [startNumber, setStartNumber] = React.useState("");
   const [endNumber, setEndNumber] = React.useState("");
-  const [filterGroup, setFilterGroup] = React.useState("nguyenngocduyby96akldjfklajdflk");
+  const [filterGroup, setFilterGroup] = React.useState(
+    "nguyenngocduyby96akldjfklajdflk"
+  );
 
   const [currentData, setCurrentData] = React.useState<DataType[]>([]);
 
@@ -39,9 +41,8 @@ export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
   React.useEffect(() => {
     if (filterGroup !== "nguyenngocduyby96akldjfklajdflk") {
       setCurrentData(data.filter((item) => item.group_name === filterGroup));
-    }
-    else{
-      setCurrentData(data)
+    } else {
+      setCurrentData(data);
     }
   }, [filterGroup]);
 
@@ -65,6 +66,7 @@ export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
 
   const callOpenProfile = async (id: string) => {
     try {
+      //console.log("try")
       const response = await axios.get(`${apiUrl}/v2/start?profile_id=${id}`);
     } catch (error) {
       console.error(error);
@@ -84,6 +86,21 @@ export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
       optionSelectGroup.push(element.group_name);
     }
   });
+
+  const callCloseProfile = async (id: string) => {
+    try {
+      const response = await axios.get(`${apiUrl}/v2/stop?profile_id=${id}`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCloseProfile = () => {
+    const list = currentData.slice(Number(startNumber) - 1, Number(endNumber));
+    list.forEach((element, index) => {
+      callCloseProfile(element.id);
+    });
+  };
 
   return (
     <Wrapper>
@@ -111,6 +128,13 @@ export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
           />
         </div>
         <div>
+          <Button
+            type="default"
+            style={{ marginRight: 10 }}
+            onClick={() => handleCloseProfile()}
+          >
+            Đóng tất cả Profile
+          </Button>
           <Button type="primary" onClick={() => setOpenModal(true)}>
             Mở Profile
           </Button>
