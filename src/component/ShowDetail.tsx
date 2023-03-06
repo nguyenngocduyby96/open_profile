@@ -20,11 +20,13 @@ type Props = {
   data: DataType[];
   apiUrl: string;
 };
+
+const filterKey = "nguyenngocduyby96akldjfklajdflk"
 export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [startNumber, setStartNumber] = React.useState("");
   const [endNumber, setEndNumber] = React.useState("");
-  const [filterGroup, setFilterGroup] = React.useState("all");
+  const [filterGroup, setFilterGroup] = React.useState("nguyenngocduyby96akldjfklajdflk");
 
   const [currentData, setCurrentData] = React.useState<DataType[]>([]);
 
@@ -35,7 +37,7 @@ export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
   }, [data]);
 
   React.useEffect(() => {
-    if (filterGroup !== "all") {
+    if (filterGroup !== "nguyenngocduyby96akldjfklajdflk") {
       setCurrentData(data.filter((item) => item.group_name === filterGroup));
     }
     else{
@@ -104,7 +106,7 @@ export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
                 value: item,
                 label: item,
               })),
-              { value: "all", label: "Tất cả các group" },
+              { value: filterKey, label: "Tất cả các group" },
             ]}
           />
         </div>
