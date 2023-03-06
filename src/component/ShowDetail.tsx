@@ -88,11 +88,7 @@ export const ShowDetail: React.FC<Props> = ({ data, apiUrl }) => {
   });
 
   const callCloseProfile = async (id: string) => {
-    try {
-      const response = await axios.get(`${apiUrl}/v2/stop?profile_id=${id}`);
-    } catch (error) {
-      console.error(error);
-    }
+    await axios.get(`${apiUrl}/v2/stop?profile_id=${id}`);
   };
 
   const handleCloseProfile = () => {
